@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人事評価システム - プロトタイプ</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 16px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .header h1 {
+            color: #333;
+            margin: 0;
+            font-size: 1.2em;
+            line-height: 1.05;
+            margin-bottom: 2px;
+            margin-top: 8px;
+        }
+        .header p {
+            display: none;
+        }
+        .basic-info {
+            margin-bottom: 4px;
+            padding: 2px 0 0 0;
+        }
+        .info-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 0;
+        }
+        .info-item {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 0.95em;
+            line-height: 1.05;
+            margin-bottom: 0;
+        }
+        .info-value {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            min-height: 20px;
+        }
+        .info-input {
+            width: 100%;
+            padding: 2px 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            font-family: inherit;
+            font-size: 0.95em;
+            line-height: 1.05;
+        }
+        .info-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+        .evaluation-section {
+            margin-bottom: 18px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #fafafa;
+        }
+        .section-title {
+            font-size: 1em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0;
+            padding: 2px 0;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+        }
+        .evaluation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .evaluation-table th,
+        .evaluation-table td {
+            border: 1px solid #ddd;
+            padding: 6px 8px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .evaluation-table td.description-cell {
+            text-align: left;
+        }
+        .description-cell {
+            text-align: left;
+            font-size: 11px;
+            color: #666;
+            line-height: 1.1;
+            padding: 4px 6px;
+        }
+        .weight-display {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .evaluation-table th {
+            background-color: #34495e;
+            color: white;
+            font-weight: bold;
+        }
+        .evaluation-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .item-name {
+            text-align: left;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 13px;
+        }
+        .score-options {
+            display: flex;
+            gap: 2px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .score-option {
+            display: flex;
+            align-items: center;
+        }
+        .score-option input[type="radio"] {
+            margin-right: 3px;
+            transform: scale(1.1);
+        }
+        .score-option label {
+            font-size: 14px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .comment-cell {
+            text-align: left;
+        }
+        .comment-textarea {
+            width: 100%;
+            min-height: 60px;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 13px;
+        }
+        .required {
+            color: #e74c3c;
+            font-size: 12px;
+        }
+        .help-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .help-button:hover {
+            background: #2980b9;
+        }
+        .submit-section {
+            text-align: center;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 2px solid #e0e0e0;
+        }
+        .submit-button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .submit-button:hover {
+            background: #229954;
+        }
+        .submit-button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .evaluation-type {
+            background: #3498db;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .total-section {
+            margin-top: 8px;
+            padding: 6px;
+            background-color: #e8f5e8;
+            border: 1px solid #27ae60;
+            border-radius: 6px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .total-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .total-value {
+            font-weight: bold;
+            color: #27ae60;
+            font-size: 18px;
+        }
+        /* 追加: 枠外にはみ出し防止 */
+        .container, .basic-info, .evaluation-section, .evaluation-table, .comment-textarea {
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-x: auto;
+        }
+        .info-input, .comment-textarea {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .checklist-popup {
+            display: none;
+            position: absolute;
+            z-index: 1000;
+            background: #fff;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            padding: 12px;
+            min-width: 420px;
+            max-width: 90vw;
+            max-height: 60vh;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+        .checklist-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        .checklist-table th, .checklist-table td {
+            border: 1px solid #ccc;
+            padding: 4px 8px;
+            text-align: left;
+            font-size: 13px;
+        }
+        .checklist-table th {
+            background: #eaf6ff;
+            font-weight: bold;
+        }
+        .checklist-checkcell {
+            text-align: center;
+            width: 60px;
+        }
+        .performance-section {
+            background: #f0f8ff;
+        }
+        .ability-section {
+            background: #f7fff0;
+        }
+        .attitude-section {
+            background: #fff8f0;
+        }
+        .help-button.performance-btn {
+            background: #b3d8fd;
+            color: #1a3a5e;
+        }
+        .help-button.ability-btn {
+            background: #b6e2b6;
+            color: #225522;
+        }
+        .help-button.attitude-btn {
+            background: #ffe0b3;
+            color: #7a4a00;
+        }
+        .help-button {
+            border: none;
+            border-radius: 4px;
+            padding: 2px 10px;
+            margin-left: 4px;
+            cursor: pointer;
+        }
+        .score-select {
+            margin-right: 16px;
+        }
+        .help-button {
+            margin-left: 8px;
+        }
+        .header h1, .header p {
+            line-height: 1.1;
+            margin-bottom: 2px;
+        }
+        .basic-info {
+            margin-bottom: 8px;
+        }
+        .info-row {
+            margin-bottom: 2px;
+        }
+        .info-label, .info-input {
+            line-height: 1.1;
+            margin-bottom: 0;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1em;
+            margin-bottom: 2px;
+        }
+        .toggle-btn {
+            font-size: 0.9em;
+            padding: 2px 8px;
+            margin-left: 8px;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            background: #f5f5f5;
+            cursor: pointer;
+        }
+        .evaluation-table {
+            margin-bottom: 8px;
+        }
+        .hidden-section {
+            display: none;
+        }
+        .info-row {
+            margin-bottom: 6px;
+        }
+        .performance-section {
+            background: #f7fff0;
+        }
+        .ability-section {
+            background: #f0f8ff;
+        }
+        .attitude-section {
+            background: #fff8f0;
+        }
+    </style>
+    <script>
+        function toggleSection(sectionId, btn) {
+            const section = document.getElementById(sectionId);
+            if (section.classList.contains('hidden-section')) {
+                section.classList.remove('hidden-section');
+                btn.textContent = '△';
+            } else {
+                section.classList.add('hidden-section');
+                btn.textContent = '▽';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>NudgeMe（人事考課表）</h1>
+        </div>
+
+        <!-- 基本情報 -->
+        <div class="basic-info">
+            <div class="info-row">
+                <div class="info-item">
+                    <div class="info-label">所属</div>
+                    <input type="text" class="info-input" placeholder="所属を入力してください">
+                </div>
+                <div class="info-item">
+                    <div class="info-label">役職</div>
+                    <input type="text" class="info-input" placeholder="役職を入力してください">
+                </div>
+                <div class="info-item">
+                    <div class="info-label">氏名</div>
+                    <input type="text" class="info-input" placeholder="氏名を入力してください">
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-item">
+                    <div class="info-label">評価区分</div>
+                    <select class="info-input">
+                        <option value="">評価区分を選択してください</option>
+                        <option value="自己評価">自己評価</option>
+                        <option value="１次評価者">１次評価者</option>
+                        <option value="２次評価者">２次評価者</option>
+                        <option value="３次評価者">３次評価者</option>
+                    </select>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">評価者</div>
+                    <input type="text" class="info-input" placeholder="評価者を入力してください">
+                </div>
+                <div class="info-item" style="display: flex; flex-direction: column;">
+                    <div class="info-label">評価期間</div>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <input type="date" class="info-input" style="width: 120px;"> ～
+                        <input type="date" class="info-input" style="width: 120px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 業績評価セクション -->
+        <div class="evaluation-section performance-section">
+            <div class="section-title">業績評価<span class="weight-display">ウェイト: 1.0</span>
+                <button class="toggle-btn" onclick="toggleSection('performance-table', this)">△</button>
+            </div>
+            <div id="performance-table">
+                <table class="evaluation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">評価項目</th>
+                            <th style="width: 30%;">説明</th>
+                            <th style="width: 25%;">評価点</th>
+                            <th style="width: 30%;">コメント</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="item-name">業務処理</td>
+                            <td class="description-cell">担当職務の処理量、仕事の速さはどうか。臨機応変にテキパキと処理したか。指示取りの良さはどうか。</td>
+                            <td>
+                                <select class="score-select" name="score_1">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button performance-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>業績評価：業務処理 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>ToDoリストや付箋の使い、優先順位を明確にしてから仕事に取り掛かる。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>短い納期や変更等にも柔軟に対応しながら必要な業務を着実に進める。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>自分が担当すべきでない仕事は断り、他者に任せたり必要な場合は業務を調整する（納期、手元の業務量、優先順位、工数などを考慮）。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>生産性向上や効率化に向けた工夫や仕組みを作って業務を進める。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>上司の指示や依頼事項を漏れなく対応したかどうか。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="item-name">正確度</td>
+                            <td class="description-cell">担当職務を正確にやり遂げたか。作業の出来栄え、修正箇所の良否又その指示はどうか。</td>
+                            <td>
+                                <select class="score-select" name="score_2">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button performance-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>業績評価：正確度 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>納期を守り、正確性、出来栄え、出来栄えの良否又その指示を守る。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>正確で丁寧な仕事を心掛け、業務ミスを防止する。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>ミスを防ぐための仕組みや工夫、品質管理に取り組んでいる。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>上司や同僚からの指摘やフィードバックを素直に受け止め、改善に活かしている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="item-name">原価意識</td>
+                            <td class="description-cell">常にムダを省く工夫をしているか。物事を改善、改良することにより原価低減に積極的な努力を行っているか。絶えず原価意識をもっているか。</td>
+                            <td>
+                                <select class="score-select" name="score_3">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button performance-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>業績評価：原価意識 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>常にムダを省く工夫をしている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>物事を改善、改良することにより原価低減に積極的な努力を行っている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>絶えず原価意識をもっている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="item-name">創意工夫</td>
+                            <td class="description-cell">現状に満足せず常に問題意識をもってより良い方法に改善しようとする努力をしているか。着想力、創造力のスケールはどうか。</td>
+                            <td>
+                                <select class="score-select" name="score_4">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button performance-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>業績評価：創意工夫 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>現状に満足せず絶えず問題意識をもってより良い方法に改善しようとする努力をしている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>着想力、創造力のスケールはどうか。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="total-section">
+                    <div class="total-row">
+                        <span class="total-label">業績評価合計点：</span>
+                        <span class="total-value" id="performance-total">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 能力評価セクション -->
+        <div class="evaluation-section ability-section">
+            <div class="section-title">能力評価<span class="weight-display">ウェイト: 1.0</span>
+                <button class="toggle-btn" onclick="toggleSection('ability-table', this)">△</button>
+            </div>
+            <div id="ability-table">
+                <table class="evaluation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">評価項目</th>
+                            <th style="width: 30%;">説明</th>
+                            <th style="width: 25%;">評価点</th>
+                            <th style="width: 30%;">コメント</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="item-name">業務知識</td>
+                            <td class="description-cell">担当業務遂行上直接必要な実務経験的知識、専門学問的知識に加えて必要部分知識を身につけ、又その保持度やその遂行能力はどうか。</td>
+                            <td>
+                                <select class="score-select" name="score_5">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button ability-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>能力評価：業務知識 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>上司の指示や依頼事項を正確に理解し、業務に反映できている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>業務に必要な工数の見積もりやスケジュール管理ができている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>知識・基本的な情報、事例の収集と活用に対するプランニングをする。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>業務遂行に応じ、積極的な知識や手段を探求する。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>目標達成に必要な情報収集、分析、活用ができている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="item-name">企画計画</td>
+                            <td class="description-cell">目的達成の為の最も効果的な手段、方法、基準、手続、解決策等を打ち出しているか。</td>
+                            <td>
+                                <select class="score-select" name="score_6">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button ability-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>能力評価：企画計画 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>目的達成のための最も効果的な手段、方法、基準、手続、解決策等を打ち出している。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>自分やチームのタスクやリソースを把握し、最適な計画を立てている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>計画・サイクルダウンした内容を着実に実行している。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>目標や計画の進捗状況を把握し、必要に応じて計画をアレンジングをし直し、最適化している。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>計画の修正や変更を柔軟に対応し、優先順位をつけて実行している。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>計画の進捗を定期的に確認し、必要な場合は計画を見直している。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="item-name">折衝力</td>
+                            <td class="description-cell">業務を円滑に遂行する為、社内外の人と理解度を高め説得折衝を行い円滑に意思の一致を図っているかどうか。</td>
+                            <td>
+                                <select class="score-select" name="score_7">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button ability-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>能力評価：折衝力 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>相手・関係者の立場や意見を尊重し、相互理解を深めている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>相手に対して適切なコミュニケーションをとっている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>相手・関係者の意見に耳を傾け、必要に応じて調整・妥協をしている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>相手・関係者の意見をまとめ、合意形成を図っている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>相手・関係者の意見を尊重しつつ、自分の意見も主張している。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>相手・関係者の意見をまとめ、最適な解決策を導き出している。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="item-name">判断力</td>
+                            <td class="description-cell">知識や経験をもとに問題の状況を適格に理解分析し、状況に最も適合した結論を導き出す力はどうか。</td>
+                            <td>
+                                <select class="score-select" name="score_8">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button ability-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>能力評価：判断力 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>状況や課題を的確に把握し、適切な判断を下している。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>情報を収集・分析し、根拠に基づいた判断をしている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>判断に迷った場合は、上司や同僚に相談し、最適な判断をしている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>判断の根拠や理由を明確に説明できる。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>判断の結果を振り返り、必要に応じて改善している。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="item-name">指導育成統率力</td>
+                            <td class="description-cell">部下、後輩の能力適性を把握しグループ全体の能率意欲の向上を図っているか。又、その必要に応じた育成に取り組んでいるか。</td>
+                            <td>
+                                <select class="score-select" name="score_9">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button ability-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>能力評価：指導育成統率力 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>部下・後輩の能力や適性を把握し、適切な指導・育成を行っている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>部下・後輩の成長や成果を把握し、適切なフィードバックを行っている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>部下・後輩の意欲やモチベーションを高める工夫をしている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>部下・後輩の課題や問題点を把握し、適切な対応をしている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>部下・後輩の成長や成果を評価し、適切な評価をしている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>部下・後輩の成長や成果を認め、適切な評価をしている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="total-section">
+                    <div class="total-row">
+                        <span class="total-label">能力評価合計点：</span>
+                        <span class="total-value" id="ability-total">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 情意（勤務態度）評価セクション -->
+        <div class="evaluation-section attitude-section">
+            <div class="section-title">情意（勤務態度）評価<span class="weight-display">ウェイト: 1.0</span>
+                <button class="toggle-btn" onclick="toggleSection('attitude-table', this)">△</button>
+            </div>
+            <div id="attitude-table">
+                <table class="evaluation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">評価項目</th>
+                            <th style="width: 30%;">説明</th>
+                            <th style="width: 25%;">評価点</th>
+                            <th style="width: 30%;">コメント</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="item-name">規律遵守</td>
+                            <td class="description-cell">定められた会社の方針規程（就業規程・安全規程・職場ルール）を充分理解しそれらの事項を良く守っているか。</td>
+                            <td>
+                                <select class="score-select" name="score_10">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button attitude-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>情意評価：規律遵守 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>定められた会社の方針規程（就業規程・安全規程・職場ルール）を充分理解しそれらの事項を良く守っているか。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="item-name">協調性</td>
+                            <td class="description-cell">部下・同僚・上司との人間関係の円滑さ及び、常に職場全体のチームワークを考えて行動しているか。他部門との協力にも配慮しているか。</td>
+                            <td>
+                                <select class="score-select" name="score_11">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button attitude-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>情意評価：協調性 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>部下・同僚・上司との人間関係の円滑さ及び、常に職場全体のチームワークを考えて行動しているか。他部門との協力にも配慮しているか。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="item-name">責任感</td>
+                            <td class="description-cell">自分の仕事に最後までやり通し、途中あらゆる障害にも立ち向かう根性を持っているか。</td>
+                            <td>
+                                <select class="score-select" name="score_12">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button attitude-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>情意評価：責任感 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>自分の仕事に最後までやり通し、途中あらゆる障害にも立ち向かう根性を持っているか。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="item-name">積極性</td>
+                            <td class="description-cell">自ら進んで困難な仕事や人の嫌がる仕事に立向かう積極性はあるか。又、現状に満足せずより良い方法を探求する姿勢はあるか。</td>
+                            <td>
+                                <select class="score-select" name="score_13">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button attitude-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>情意評価：積極性 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>自ら進んで困難な仕事や人の嫌がる仕事に立向かう積極性はあるか。又、現状に満足せずより良い方法を探求する姿勢はあるか。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="item-name">礼儀作法</td>
+                            <td class="description-cell">一般常識やマナーを身につけて対人関係に接しているか。</td>
+                            <td>
+                                <select class="score-select" name="score_14">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button attitude-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>情意評価：礼儀作法 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>挨拶・返事・お礼ができている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>身だしなみ・服装に気を配っている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>時間・約束を守っている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>言葉遣い・態度に気をつけている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>職場のルールやマナーを守っている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                        <tr><td>周囲に不快感を与えないようにしている。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="item-name">出勤成績</td>
+                            <td class="description-cell">対象期間中の勤怠成績はどうか。欠勤・遅刻・早退・職場離脱の状況はどうか。</td>
+                            <td>
+                                <select class="score-select" name="score_15">
+                                    <option value="">選択</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <button class="help-button attitude-btn" onclick="showChecklistPopup(this, `
+                                    <table class='checklist-table'>
+                                        <tr><th colspan='3'>情意評価：出勤成績 チェックリスト</th></tr>
+                                        <tr><th>チェック項目</th><th class='checklist-checkcell'>自己評価</th><th class='checklist-checkcell'>上司評価</th></tr>
+                                        <tr><td>対象期間中の勤怠成績はどうか。欠勤・遅刻・早退・職場離脱の状況はどうか。</td><td><input type='checkbox'></td><td><input type='checkbox'></td></tr>
+                                    </table>
+                                `)">チェックリスト</button>
+                            </td>
+                            <td class="comment-cell">
+                                <textarea class="comment-textarea" placeholder="評価理由や改善点などを記入してください"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="total-section">
+                    <div class="total-row">
+                        <span class="total-label">情意（勤務態度）評価合計点：</span>
+                        <span class="total-value" id="attitude-total">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 管理画面で各評価項目ごとにウェイトを設定できる設計（今後実装予定） -->
+        <!-- <div class="weight-setting">管理画面で各評価項目ごとにウェイトを設定できます</div> -->
+
+        <div class="submit-section">
+            <button class="submit-button" onclick="submitEvaluation()">評価を保存</button>
+        </div>
+    </div>
+
+    <div id="checklist-popup" class="checklist-popup" style="display:none;"></div>
+
+    <script>
+        function showChecklist(itemName) {
+            alert(itemName + 'のチェックリスト（2ページ目以降の詳細項目）を表示します。\n\nここにチェックリストの内容が表示されます。');
+        }
+
+        function showChecklistPopup(target, html) {
+            let popup = document.getElementById('checklist-popup');
+            if (!popup) {
+                popup = document.createElement('div');
+                popup.id = 'checklist-popup';
+                popup.className = 'checklist-popup';
+                document.body.appendChild(popup);
+            }
+            popup.innerHTML = html;
+            const rect = target.getBoundingClientRect();
+            popup.style.display = 'block';
+            popup.style.top = (window.scrollY + rect.bottom + 4) + 'px';
+            popup.style.left = (window.scrollX + rect.left) + 'px';
+
+            // 外側クリックで閉じる
+            setTimeout(() => {
+                document.addEventListener('mousedown', checklistOutsideClick, { once: true });
+            }, 0);
+        }
+
+        function checklistOutsideClick(e) {
+            const popup = document.getElementById('checklist-popup');
+            if (popup && !popup.contains(e.target)) {
+                popup.style.display = 'none';
+            } else {
+                // ポップアップ内クリック時は再度外側クリックを待つ
+                document.addEventListener('mousedown', checklistOutsideClick, { once: true });
+            }
+        }
+
+        function hideChecklistPopup() {
+            const popup = document.getElementById('checklist-popup');
+            if (popup) popup.style.display = 'none';
+        }
+
+        function submitEvaluation() {
+            // 必須項目のチェック
+            const requiredScores = document.querySelectorAll('select[name^="score_"]');
+            let hasScore = false;
+            
+            for (let i = 0; i < requiredScores.length; i++) {
+                if (requiredScores[i].value !== "") {
+                    hasScore = true;
+                    break;
+                }
+            }
+            
+            if (!hasScore) {
+                alert('すべての評価項目で点数を選択してください。');
+                return;
+            }
+            
+            alert('評価が保存されました！');
+        }
+
+        // ページ読み込み時の初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('評価入力画面（1ページ目）が読み込まれました');
+        });
+    </script>
+    <script>
+    // パスワード認証
+    document.addEventListener('DOMContentLoaded', function() {
+        var correct = 'nudgepass'; // パスワード
+        var authed = false;
+        while (!authed) {
+            var input = window.prompt('パスワードを入力してください');
+            if (input === null) {
+                document.body.innerHTML = '<div style="text-align:center;margin-top:40px;">認証がキャンセルされました</div>';
+                return;
+            }
+            if (input === correct) {
+                authed = true;
+                document.body.style.display = '';
+            } else {
+                alert('パスワードが違います');
+            }
+        }
+    });
+    document.body.style.display = 'none';
+    </script>
+</body>
+</html> 

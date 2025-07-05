@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>NudgeMe（人事考課表）記録閲覧</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="evaluation-app-prototype.css">
+    <style>
+        body { font-family: 'Segoe UI', 'Meiryo', sans-serif; background: #f5f5f5; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 12px 18px 32px 18px; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
+        .header h1 { font-size: 1.2em; line-height: 1.05; margin-bottom: 2px; margin-top: 8px; }
+        .basic-info { margin-bottom: 8px; }
+        .info-row { display: flex; gap: 8px; margin-bottom: 6px; }
+        .info-item { flex: 1; }
+        .info-label { font-size: 0.95em; line-height: 1.05; margin-bottom: 0; font-weight: bold; color: #2c3e50; }
+        .info-value { font-size: 0.95em; line-height: 1.05; padding: 2px 4px; background: #f7f7f7; border-radius: 3px; border: 1px solid #eee; }
+        .section-title { font-size: 1em; margin-bottom: 0; padding: 2px 0; font-weight: bold; color: #2c3e50; display: flex; align-items: center; gap: 8px; }
+        .evaluation-section { margin-bottom: 18px; border-radius: 6px; padding: 8px 8px 12px 8px; }
+        .performance-section { background: #f7fff0; }
+        .ability-section { background: #f0f8ff; }
+        .attitude-section { background: #fff8f0; }
+        .evaluation-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+        .evaluation-table th, .evaluation-table td { border: 1px solid #ccc; padding: 4px 8px; text-align: left; font-size: 13px; }
+        .evaluation-table th { background: #eaf6ff; font-weight: bold; }
+        .score-cell, .comment-cell { text-align: center; }
+        .checklist-view { font-size: 1.1em; }
+        .checklist-checked { color: #2196f3; font-weight: bold; }
+        .checklist-unchecked { color: #bbb; }
+        .view-label { font-size: 0.9em; color: #888; margin-bottom: 2px; }
+        .view-block { display: flex; flex-direction: column; align-items: center; }
+        .view-row { display: flex; gap: 8px; align-items: flex-start; }
+        .view-col { flex: 1; min-width: 120px; }
+        .view-title { font-weight: bold; font-size: 0.95em; margin-bottom: 2px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>NudgeMe（人事考課表）記録閲覧</h1>
+        </div>
+        <!-- 基本情報 -->
+        <div class="basic-info">
+            <div class="info-row">
+                <div class="info-item">
+                    <div class="info-label">所属</div>
+                    <div class="info-value">営業部</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">役職</div>
+                    <div class="info-value">主任</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">氏名</div>
+                    <div class="info-value">山田 太郎</div>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-item">
+                    <div class="info-label">評価区分</div>
+                    <div class="info-value">１次評価者</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">評価者</div>
+                    <div class="info-value">佐藤 花子</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">評価期間</div>
+                    <div class="info-value">2024-04-01 ～ 2024-09-30</div>
+                </div>
+            </div>
+        </div>
+        <!-- 業績評価セクション（全項目） -->
+        <div class="evaluation-section performance-section">
+            <div class="section-title">業績評価<span class="weight-display">ウェイト: 1.0</span></div>
+            <table class="evaluation-table">
+                <thead>
+                    <tr>
+                        <th style="width: 9%; min-width: 70px;">評価項目</th>
+                        <th style="width: 24%; min-width: 160px;">説明</th>
+                        <th class="score-cell" style="width: 6%; min-width: 55px;">自己<br>評価</th>
+                        <th class="score-cell" style="width: 6%; min-width: 55px;">1次<br>評価</th>
+                        <th class="score-cell" style="width: 6%; min-width: 55px;">2次<br>評価</th>
+                        <th class="score-cell" style="width: 6%; min-width: 55px;">3次<br>評価</th>
+                        <th class="score-cell" style="width: 7%; min-width: 60px;">最終<br>決定</th>
+                        <th style="width: 36%; min-width: 220px;">コメント</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="item-name">業務処理</td>
+                        <td class="description-cell">担当職務の処理量、仕事の速さはどうか。臨機応変にテキパキと処理したか。指示取りの良さはどうか。</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">6</td>
+                        <td class="score-cell">7</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> 迅速に対応できていた。</div>
+                            <div><span class="view-label">1次評価:</span> 丁寧な仕事ぶりだった。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-name">正確度</td>
+                        <td class="description-cell">担当職務を正確にやり遂げたか。作業の出来栄え、修正箇所の良否又その指示はどうか。</td>
+                        <td class="score-cell">9</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">8</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> ミスが少なかった。</div>
+                            <div><span class="view-label">1次評価:</span> 正確な作業だった。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-name">原価意識</td>
+                        <td class="description-cell">常にムダを省く工夫をしているか。物事を改善、改良することにより原価低減に積極的な努力を行っているか。絶えず原価意識をもっているか。</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">6</td>
+                        <td class="score-cell">6</td>
+                        <td class="score-cell">7</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> コスト意識を持って行動した。</div>
+                            <div><span class="view-label">1次評価:</span> 無駄が少なかった。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-name">創意工夫</td>
+                        <td class="description-cell">現状に満足せず常に問題意識をもってより良い方法に改善しようとする努力をしているか。着想力、創造力のスケールはどうか。</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">8</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> 改善提案を積極的に出した。</div>
+                            <div><span class="view-label">1次評価:</span> 創意工夫が見られた。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- 能力評価セクション（全項目） -->
+        <div class="evaluation-section ability-section">
+            <div class="section-title">能力評価<span class="weight-display">ウェイト: 1.0</span></div>
+            <table class="evaluation-table">
+                <thead>
+                    <tr>
+                        <th style="width: 9%; min-width: 70px;">評価項目</th>
+                        <th style="width: 24%; min-width: 160px;">説明</th>
+                        <th class="score-cell" style="width: 6%; min-width: 55px;">自己<br>評価</th>
+                        <th class="score-cell" style="width: 6%; min-width: 55px;">1次<br>評価</th>
+                        <th class="score-cell" style="width: 6%; min-width: 55px;">2次<br>評価</th>
+                        <th class="score-cell" style="width: 6%; min-width: 55px;">3次<br>評価</th>
+                        <th class="score-cell" style="width: 7%; min-width: 60px;">最終<br>決定</th>
+                        <th style="width: 36%; min-width: 220px;">コメント</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="item-name">業務知識</td>
+                        <td class="description-cell">担当業務遂行上直接必要な実務経験的知識、専門学問的知識に加えて必要部分知識を身につけ、又その保持度やその遂行能力はどうか。</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">8</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> 必要な知識は十分に身についている。</div>
+                            <div><span class="view-label">1次評価:</span> 知識面で問題なし。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-name">企画計画</td>
+                        <td class="description-cell">目的達成の為の最も効果的な手段、方法、基準、手続、解決策等を打ち出しているか。</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">6</td>
+                        <td class="score-cell">6</td>
+                        <td class="score-cell">7</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> 計画立案に積極的に関わった。</div>
+                            <div><span class="view-label">1次評価:</span> 計画性があった。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-name">折衝力</td>
+                        <td class="description-cell">業務を円滑に遂行する為、社内外の人と理解度を高め説得折衝を行い円滑に意思の一致を図っているかどうか。</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">8</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> 折衝の場面でリーダーシップを発揮した。</div>
+                            <div><span class="view-label">1次評価:</span> 説得力があった。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-name">判断力</td>
+                        <td class="description-cell">知識や経験をもとに問題の状況を適格に理解分析し、状況に最も適合した結論を導き出す力はどうか。</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">6</td>
+                        <td class="score-cell">6</td>
+                        <td class="score-cell">7</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> 状況判断に自信がある。</div>
+                            <div><span class="view-label">1次評価:</span> 適切な判断だった。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-name">指導育成統率力</td>
+                        <td class="description-cell">部下、後輩の能力適性を把握しグループ全体の能率意欲の向上を図っているか。又、その必要に応じた育成に取り組んでいるか。</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">8</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> 後輩指導に力を入れた。</div>
+                            <div><span class="view-label">1次評価:</span> 指導力があった。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- 情意評価セクション（全項目） -->
+        <div class="evaluation-section attitude-section">
+            <div class="section-title">情意（勤務態度）評価<span class="weight-display">ウェイト: 1.0</span></div>
+            <table class="evaluation-table">
+                <thead>
+                    <tr>
+                        <th style="width: 9%; min-width: 70px;">評価項目</th>
+                        <th style="width: 24%; min-width: 160px;">説明</th>
+                        <th class="score-cell" style="width: 6%; min-width: 55px;">自己<br>評価</th>
+                        <th class="score-cell" style="width: 6%; min-width: 55px;">1次<br>評価</th>
+                        <th class="score-cell" style="width: 6%; min-width: 55px;">2次<br>評価</th>
+                        <th class="score-cell" style="width: 6%; min-width: 55px;">3次<br>評価</th>
+                        <th class="score-cell" style="width: 7%; min-width: 60px;">最終<br>決定</th>
+                        <th style="width: 36%; min-width: 220px;">コメント</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="item-name">規律遵守</td>
+                        <td class="description-cell">定められた会社の方針規程（就業規程・安全規程・職場ルール）を充分理解しそれらの事項を良く守っているか。</td>
+                        <td class="score-cell">9</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">8</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> 規則を守ることを意識した。</div>
+                            <div><span class="view-label">1次評価:</span> 規律正しい行動だった。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-name">協調性</td>
+                        <td class="description-cell">部下・同僚・上司との人間関係の円滑さ及び、常に職場全体のチームワークを考えて行動しているか。他部門との協力にも配慮しているか。</td>
+                        <td class="score-cell">9</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">8</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> チームワークを意識して行動した。</div>
+                            <div><span class="view-label">1次評価:</span> 良好な協調性。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-name">責任感</td>
+                        <td class="description-cell">自分の仕事に最後までやり通し、途中あらゆる障害にも立ち向かう根性を持っているか。</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">8</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> 最後までやり遂げた。</div>
+                            <div><span class="view-label">1次評価:</span> 責任感が強い。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-name">積極性</td>
+                        <td class="description-cell">自ら進んで困難な仕事や人の嫌がる仕事に立向かう積極性はあるか。又、現状に満足せずより良い方法を探求する姿勢はあるか。</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">6</td>
+                        <td class="score-cell">6</td>
+                        <td class="score-cell">7</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> 積極的に取り組んだ。</div>
+                            <div><span class="view-label">1次評価:</span> 前向きな姿勢だった。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-name">礼儀作法</td>
+                        <td class="description-cell">一般常識やマナーを身につけて対人関係に接しているか。</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">8</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> 礼儀を大切にした。</div>
+                            <div><span class="view-label">1次評価:</span> マナーが良い。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-name">出勤成績</td>
+                        <td class="description-cell">対象期間中の勤怠成績はどうか。欠勤・遅刻・早退・職場離脱の状況はどうか。</td>
+                        <td class="score-cell">9</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">8</td>
+                        <td class="score-cell">7</td>
+                        <td class="score-cell">8</td>
+                        <td class="comment-cell">
+                            <div><span class="view-label">自己評価:</span> 欠勤・遅刻なし。</div>
+                            <div><span class="view-label">1次評価:</span> 勤怠良好。</div>
+                            <div><span class="view-label">2次評価:</span> 特になし</div>
+                            <div><span class="view-label">3次評価:</span> 特になし</div>
+                            <div><span class="view-label">最終決定:</span> 良好</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+    // パスワード認証
+    document.addEventListener('DOMContentLoaded', function() {
+        var correct = 'nudgepass'; // パスワード
+        var authed = false;
+        while (!authed) {
+            var input = window.prompt('パスワードを入力してください');
+            if (input === null) {
+                document.body.innerHTML = '<div style="text-align:center;margin-top:40px;">認証がキャンセルされました</div>';
+                return;
+            }
+            if (input === correct) {
+                authed = true;
+                document.body.style.display = '';
+            } else {
+                alert('パスワードが違います');
+            }
+        }
+    });
+    document.body.style.display = 'none';
+    </script>
+</body>
+</html> 
